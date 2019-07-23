@@ -1,0 +1,26 @@
+{
+    "name": "evilsystem/banlist",
+    "type": "phpbb-extension",
+    "description": "Create a list of banned users of the forum",
+    "homepage": "https://amxx-bg.info",
+    "version": "1.0.5",
+    "time": "2019-07-07",
+    "license": "GPL-2.0-only",
+    "authors": [
+        {
+            "name": "Evil",
+            "email": "inkyzfx@gmail.com",
+            "homepage": "http://github.com/stfkolev",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4"
+    },
+    "extra": {
+        "display-name": "Banlist",
+        "soft-require": {
+            "phpbb/phpbb": ">=3.2.0,<3.3.0@dev"
+        }
+    }
+}
