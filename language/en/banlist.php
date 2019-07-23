@@ -71,13 +71,13 @@ $lang = array_merge($lang, array(
    ),
 	'MINLEFT'                     => array(
       0   => '<strong>0</strong> minutes',
-      1   => '<strong>%d</strong> minutes',
+      1   => '<strong>%d</strong> minute',
       2   => '<strong>%d</strong> minutes',
-      3   => '<strong>%d</strong> minute',
+      3   => '<strong>%d</strong> minutes',
    ),   
    	'WARN_COUNT'               => array(
       0   => 'The user currently has <strong>0</strong> warnings...',
-      1   => 'The user currently has <strong>%d</strong> warnings:',
+      1   => 'The user currently has <strong>%d</strong> warning:',
       2   => 'The user currently has <strong>%d</strong> warnings:',
       3   => 'The user currently has <strong>%d</strong> warnings:',
    ),
