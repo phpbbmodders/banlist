@@ -28,7 +28,7 @@ $lang = array_merge($lang, array(
    
    /*! User Page */
 	'USBU'		                  => 'This account is permanently banned! ',
-   'USBD'		                  => 'This account is blocked. It will be automatically unbanned in ',
+   'USBD'		                  => 'This account is banned. It will be automatically unbanned in ',
    
    /*! ACP */
 	'BL_CONFIG'		               => 'Configuration',
