@@ -1,28 +1,30 @@
 services:
-    evilsystem.banlist.controller.main:
-        class: evilsystem\banlist\controller\main_controller
-        arguments:
-            - @request 
-            - @config
-            - @pagination
-            - @dbal.conn
-            - @auth
-            - @template
-            - @user
-            - @controller.helper
-            - %core.root_path%
-            - %core.php_ext%
-            - %core.table_prefix%
-    evilsystem.banlist.main_listener:
-        class: evilsystem\banlist\event\main_listener
-        arguments:
-            - @evilsystem.banlist.controller.main
-            - @config
-            - @request
-            - @dbal.conn
-            - @auth
-            - @template
-            - @user
-            - %core.root_path%
-        tags:
-            - { name: event.listener }
+  evilsystem.banlist.controller.main:
+    class: evilsystem\banlist\controller\main_controller
+    arguments:
+      - "@request"
+      - "@config"
+      - "@pagination"
+      - "@dbal.conn"
+      - "@auth"
+      - "@template"
+      - "@user"
+      - "@controller.helper"
+      - "%core.root_path%"
+      - "%core.php_ext%"
+      - "%core.table_prefix%"
+  
+  evilsystem.banlist.main_listener:
+    class: evilsystem\banlist\event\main_listener
+    arguments:
+      - "@evilsystem.banlist.controller.main"
+      - "@config"
+      - "@request"
+      - "@dbal.conn"
+      - "@auth"
+      - "@template"
+      - "@user"
+      - "%core.root_path%"
+    tags:
+      - { name: event.listener }
+

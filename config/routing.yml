@@ -1,3 +1,4 @@
 evilsystem_banlist_main_controller:
-    pattern: /banlist
-    defaults: { _controller: evilsystem.banlist.controller.main:main }
+  path: /banlist
+  defaults: { _controller: evilsystem.banlist.controller.main:main }
+
