@@ -1,26 +1,37 @@
 {
-    "name": "evilsystem/banlist",
+    "name": "phpbbmodders/banlist",
     "type": "phpbb-extension",
-    "description": "Create a list of banned users of the forum",
-    "homepage": "https://amxx-bg.info",
-    "version": "1.0.5",
-    "time": "2019-07-07",
+    "description": "Adds a list of banned users to your board for others to view.",
+    "version": "1.0.0",
     "license": "GPL-2.0-only",
     "authors": [
+        {
+            "name": "phpBBModders",
+            "email": "board@phpbbmodders.com",
+            "homepage": "https://www.phpbbmodders.com/",
+            "role": "Lead Developer"
+        },
+        {
+            "name": "danieltj",
+            "homepage": "https://www.phpbbmodders.com/community/memberlist.php?mode=viewprofile&u=63",
+            "role": "Contributor"
+        },
         {
             "name": "Evil",
             "email": "inkyzfx@gmail.com",
             "homepage": "http://github.com/stfkolev",
-            "role": "Developer"
+            "role": "Developer of original extension."
         }
     ],
     "require": {
-        "php": ">=5.4"
+        "php": ">=7.0",
+        "composer/installers": "~1.0.0",
+        "phpbb/phpbb": ">=3.3.0"
     },
     "extra": {
-        "display-name": "Banlist",
+        "display-name": "Ban List",
         "soft-require": {
-            "phpbb/phpbb": ">=3.2.0,<3.3.0@dev"
+            "phpbb/phpbb": ">=3.3.12"
         }
     }
 }

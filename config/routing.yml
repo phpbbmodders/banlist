@@ -1,4 +1,4 @@
-evilsystem_banlist_main_controller:
+phpbbmodders_banlist_main_controller:
   path: /banlist
-  defaults: { _controller: evilsystem.banlist.controller.main:main }
+  defaults: { _controller: phpbbmodders.banlist.controller.main:main }
 

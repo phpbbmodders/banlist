@@ -8,7 +8,7 @@
 *
 */
 
-namespace evilsystem\banlist\acp;
+namespace phpbbmodders\banlist\acp;
 
 /**
 * @ignore
@@ -23,10 +23,10 @@ class banlist_info
 	function module()
 	{
 		return array(
-			'filename'	=> '\evilsystem\banlist\banlist_module',
+			'filename'	=> '\phpbbmodders\banlist\banlist_module',
 			'title'		=> 'BL_ACP',
 			'modes'		=> array(
-				'banlist_config' => array('title' => 'BL_CONFIG', 'auth' => 'ext_evilsystem/banlist && acl_a_board', 'cat' => array('BL_ACP')),
+				'banlist_config' => array('title' => 'BL_CONFIG', 'auth' => 'ext_phpbbmodders/banlist && acl_a_board', 'cat' => array('BL_ACP')),
 			),
 		);
 	}

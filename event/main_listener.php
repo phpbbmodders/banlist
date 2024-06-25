@@ -8,7 +8,7 @@
 *
 */
 
-namespace evilsystem\banlist\event;
+namespace phpbbmodders\banlist\event;
 
 /**
 * @ignore
@@ -32,7 +32,7 @@ class main_listener implements EventSubscriberInterface
 	protected $phpbb_root_path;
 	
 	public function __construct(
-		\evilsystem\banlist\controller\main_controller $controller,
+		\phpbbmodders\banlist\controller\main_controller $controller,
 		\phpbb\config\config $config, 
 		\phpbb\request\request $request,
 		\phpbb\db\driver\driver_interface $db, 
@@ -66,7 +66,7 @@ class main_listener implements EventSubscriberInterface
 	public function load_language_on_setup($event) {
 		$lang_set_ext = $event['lang_set_ext'];
 		$lang_set_ext[] = array(
-			'ext_name' => 'evilsystem/banlist',
+			'ext_name' => 'phpbbmodders/banlist',
 			'lang_set' => 'banlist',
 		);
 
