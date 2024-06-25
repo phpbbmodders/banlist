@@ -1,13 +1,12 @@
 <?php
-/**
-*
-* @package Banlist
-* @copyright (c) 2019 Evil
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
-*
-*/
 
-namespace evilsystem\banlist\migrations;
+/**
+ * @package Banlist
+ * @copyright (c) 2024 phpBBModders.net
+ * @license https://opensource.org/license/gpl-2-0 GPL v2
+ */
+
+namespace phpbbmodders\banlist\migrations;
 
 /**
 * @ignore
@@ -25,7 +24,7 @@ class release_1_0_3 extends \phpbb\db\migration\migration
 	}
 static public function depends_on()
 	{
-		return array('\evilsystem\banlist\migrations\release_1_0_2');
+		return array('\phpbbmodders\banlist\migrations\release_1_0_2');
 	}
 
 	

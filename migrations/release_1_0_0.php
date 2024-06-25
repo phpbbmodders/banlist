@@ -1,13 +1,12 @@
 <?php
-/**
-*
-* @package Banlist
-* @copyright (c) 2019 Evil
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
-*
-*/
 
-namespace evilsystem\banlist\migrations;
+/**
+ * @package Banlist
+ * @copyright (c) 2024 phpBBModders.net
+ * @license https://opensource.org/license/gpl-2-0 GPL v2
+ */
+
+namespace phpbbmodders\banlist\migrations;
 
 /**
 * @ignore
@@ -62,7 +61,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 				'acp',
 				'BL_ACP',
 				array(
-					'module_basename'	=> '\evilsystem\banlist\acp\banlist_module',
+					'module_basename'	=> '\phpbbmodders\banlist\acp\banlist_module',
 					'modes'	=> array('banlist_config'),
 				),
 			)),
@@ -80,7 +79,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 				'acp',
 				'BL_ACP',
 				array(
-					'module_basename'	=> '\evilsystem\banlist\acp\banlist_module',
+					'module_basename'	=> '\phpbbmodders\banlist\acp\banlist_module',
 					'modes'	=> array('banlist_config'),
 				),
 			)),

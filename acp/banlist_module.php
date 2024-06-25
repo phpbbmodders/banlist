@@ -8,7 +8,7 @@
 *
 */
 
-namespace evilsystem\banlist\acp;
+namespace phpbbmodders\banlist\acp;
 
 /**
 * @ignore
