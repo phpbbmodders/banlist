@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Ban List extension for the phpBB Forum Software package
+ * Ban List. An extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2024, phpBB Modders, https://www.phpbbmodders.com/
  * @license GNU General Public License, version 2 (GPL-2.0)
@@ -35,5 +35,15 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, [
-	'ACL_U_VIEWBAN'	=> 'Can view ban list',
+	'BANLIST'		=> 'Ban List',
+	'BANLIST_TITLE'	=> 'List with all banned users',
+
+	'BAN_END_DATE'		=> 'Unban date',
+	'BAN_REASON'		=> 'Reason',
+	'BAN_START_DATE'	=> 'Ban date',
+	'BAN_USERNAME'		=> 'Username',
+	'PERMANENT'			=> 'Permanent ban',
+	'LAST'				=> '<strong>Last</strong>',
+	'WARN'				=> 'Warnings',
+	'WARN_NO'			=> '<strong>---</strong>',
 ]);

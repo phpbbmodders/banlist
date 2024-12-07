@@ -1,4 +1,3 @@
-phpbbmodders_banlist_main_controller:
-  path: /banlist
-  defaults: { _controller: phpbbmodders.banlist.controller.main:main }
-
+phpbbmodders_banlist_controller:
+    path: /banlist
+    defaults: { _controller: phpbbmodders.banlist.controller.main:display }

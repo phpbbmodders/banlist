@@ -1,204 +1,175 @@
 <?php
-
 /**
- * @package Banlist
- * @copyright (c) 2024 phpBBModders.net
- * @license https://opensource.org/license/gpl-2-0 GPL v2
+ *
+ * Ban List extension for the phpBB Forum Software package
+ *
+ * @copyright (c) 2024, phpBB Modders, https://www.phpbbmodders.com/
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
  */
 
 namespace phpbbmodders\banlist\controller;
 
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-	class main_controller
+/**
+ * Ban List main controller
+ */
+class main_controller
+{
+	/** @var ContainerInterface */
+	protected $container;
+
+	/** @var \phpbb\auth\auth */
+	protected $auth;
+
+	/** @var \phpbb\config\config */
+	protected $config;
+
+	/** @var \phpbb\db\driver\driver_interface */
+	protected $db;
+
+	/** @var \phpbb\controller\helper */
+	protected $helper;
+
+	/** @var \phpbb\language\language */
+	protected $language;
+
+	/** @var \phpbb\request\request */
+	protected $request;
+
+	/** @var \phpbb\template\template */
+	protected $template;
+
+	/** @var \phpbb\user */
+	protected $user;
+
+	/** @var string */
+	protected $table_prefix;
+
+	/**
+	 * Constructor
+	 *
+	 * @param ContainerInterface                 $container
+	 * @param \phpbb\auth\auth                   $auth
+	 * @param \phpbb\config\config               $config
+	 * @param \phpbb\db\driver\driver_interface  $db
+	 * @param \phpbb\controller\helper           $helper
+	 * @param \phpbb\language\language           $language
+	 * @param \phpbb\request\request             $request
+	 * @param \phpbb\template\template           $template
+	 * @param \phpbb\user                        $user
+	 * @param string                             $table_prefix
+	 */
+	public function __construct(ContainerInterface $container, \phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\controller\helper $helper, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $table_prefix)
 	{
-		protected $request;
-		protected $config;
-		protected $pagination;
-		protected $db;
-		protected $auth;
-		protected $template;
-		protected $user;
-		protected $helper;
-		protected $phpbb_root_path;
-		protected $php_ext;
+		$this->container = $container;
+		$this->auth = $auth;
+		$this->config = $config;
+		$this->db = $db;
+		$this->helper = $helper;
+		$this->language = $language;
+		$this->request = $request;
+		$this->template = $template;
+		$this->user = $user;
+		$this->table_prefix = $table_prefix;
+	}
 
-		public function __construct(\phpbb\request\request_interface $request,\phpbb\config\config $config, \phpbb\pagination $pagination, \phpbb\db\driver\driver_interface $db, \phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\controller\helper $helper, $phpbb_root_path, $php_ext, $table_prefix)
-		{
-			$this->request = $request;
-			$this->config = $config;
-			$this->pagination = $pagination;
-			$this->db = $db;
-			$this->auth = $auth;
-			$this->template = $template;
-			$this->user = $user;
-			$this->helper = $helper;
-			$this->phpbb_root_path = $phpbb_root_path;
-			$this->php_ext = $php_ext;
-			$this->table_prefix = $table_prefix;
-		}
-	
-	public function main()
+	/**
+	 * Controller handler for route /banlist
+	 */
+	public function display()
 	{
-		if (!$this->auth->acl_gets('u_viewban'))
+		// Check for permission to view the ban list
+		if (!$this->auth->acl_get('u_viewban'))
 		{
-			if ($this->user->data['user_id'] != ANONYMOUS)
-				trigger_error('NOT_AUTHORISED');
-			
-
-			login_box('', $this->user->lang['LOGIN_EXPLAIN_VIEWBAN']);
+			throw new \phpbb\exception\http_exception(403, $this->language->lang('NOT_AUTHORISED'));
 		}
 
-		$start	= request_var('start', 0);
-		$mode   = request_var('mode', '');
-		$per_page	= $this->config['bl_u'];
+		$pagination = $this->container->get('pagination');
+
+		$start = $this->request->variable('start', 0);
 
 		$sql = 'SELECT COUNT(ban_userid) as total_banned_users
-			FROM ' . BANLIST_TABLE . '
-			WHERE ban_exclude = 0 AND ban_userid > 0 AND (ban_end >= ' . time() . ' OR ban_end = 0)';
+			FROM ' . $this->table_prefix . 'banlist
+			WHERE ban_exclude = 0
+				AND ban_userid > 0
+				AND (ban_end >= ' . time() . '
+				OR ban_end = 0)';
+		$result = $this->db->sql_query($sql);
+		$total_banned_users = (int) $this->db->sql_fetchfield('total_banned_users');
+		$this->db->sql_freeresult($result);
 
-		$total_banned_users = (int) ($this->db->sql_fetchrow($this->db->sql_query($sql)))['total_banned_users'];
+		// Handle pagination
+		$start = $pagination->validate_start($start, $this->config['users_per_page'], $total_banned_users);
+		$base_url = $this->helper->route('phpbbmodders_banlist_controller');
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_banned_users, $this->config['users_per_page'], $start);
 
-		$default_key = 'a';
-
-		$sort_key = $this->request->variable('sk', 'a');
-		$sort_dir = $this->request->variable('sd', 'd');
-		$sort_key_text = array('a' => $this->user->lang['SORT_USERNAME'], 'b' => $this->user->lang['BAN_START_DATE']);
-		$sort_key_sql = array('a' => 'u.username_clean', 'b' => 'b.ban_start');
-		$sort_dir_text = array('a' => $this->user->lang['ASCENDING'], 'd' => $this->user->lang['DESCENDING']);
-		$s_sort_key = '';
-
-		foreach ($sort_key_text as $key => $value) {
-			$selected = ($sort_key == $key) ? ' selected="selected"' : '';
-			$s_sort_key .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
-		}
-
-		$s_sort_dir = '';
-
-		foreach ($sort_dir_text as $key => $value) {
-			$selected = ($sort_dir == $key) ? ' selected="selected"' : '';
-			$s_sort_dir .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
-		}
-		
-		$first_char = request_var('first_char', '');
 		$sql_where = ' AND b.ban_userid = u.user_id AND u.user_type <> ' . USER_IGNORE;
+		//$order_by = ($sort_dir == 'a') ? 'ASC' : 'DESC';
 
-		if ($first_char == 'other')
-			for ($i = 97; $i < 123; $i++)
-					$sql_where .= ' AND u.username_clean NOT ' . $this->db->sql_like_expression(chr($i) . $db->any_char);
-			
-		else if ($first_char)
-			$sql_where .= ' AND u.username_clean ' . $this->db->sql_like_expression(substr($first_char, 0, 1) . $db->any_char);
-		
-
-		if (!isset($sort_key_sql[$sort_key]))
-			$sort_key = $default_key;
-		
-		/*! Ordering */	
-		$order_by = $sort_key_sql[$sort_key] . ' ' . (($sort_dir == 'a') ? 'ASC' : 'DESC');
-		$params = $sort_params = array();
-		$check_params = array(
-			'sk'			=> array('sk', $default_key),
-			'sd'			=> array('sd', 'a'),
-			'username'		=> array('username', '', true),
-			'ban_start'		=> array('ban_start', '', true),
-			'first_char'	=> array('first_char', ''),
-		);
-
-		$u_first_char_params = array();
-
-		foreach ($check_params as $key => $call) {
-			if (!isset($_REQUEST[$key]))
-				continue;
-			
-		
-			$param = call_user_func_array('request_var', $call);
-			$param = urlencode($key) . '=' . ((is_string($param)) ? urlencode($param) : $param);
-			$params[] = $param;
-
-			if ($key != 'sk' && $key != 'sd')
-				$sort_params[] = $param;
-			
-		}
-
-		/*! Pagination sort */
-		$sort_params[] = "mode=$mode";
-		$pagination_url = append_sid("{$this->phpbb_root_path}banlist", implode('&amp;', $params));
-		$sort_url = append_sid("{$this->phpbb_root_path}banlist");
-
-		unset($params, $sort_params);
-
-		/*! Assign template */
-		$this->template->assign_vars(array(
-			'S_SORT_OPTIONS'		=> $s_sort_key
-		));
-
-		$sql_ary = array(
+		$sql_ary = [
 			'SELECT'	=> 'b.*, u.user_id, u.username, u.username_clean, u.user_colour, u.user_warnings, u.user_last_warning',
-			'FROM'		=> array(BANLIST_TABLE => 'b', USERS_TABLE => 'u'),
+			'FROM'		=> [$this->table_prefix . 'banlist' => 'b', $this->table_prefix . 'users' => 'u'],
 			'WHERE'		=> '(b.ban_end >= ' . time() . '
-			OR b.ban_end = 0) AND ban_exclude <> 1' . $sql_where,
-			'ORDER_BY'	=> $order_by,
-		);
+				OR b.ban_end = 0) AND ban_exclude <> 1' . $sql_where,
+			'ORDER_BY'	=> 'ban_id ASC',
+		];
 
-		$result = $this->db->sql_query_limit($this->db->sql_build_query('SELECT', $sql_ary), $per_page, $start);
+		$result = $this->db->sql_query_limit($this->db->sql_build_query('SELECT', $sql_ary), $this->config['users_per_page'], $start);
 		$row_number = $start;
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$ban_end = $row['ban_end'];
+			$banstart = $row['ban_start'];
 
-		if ($row = $this->db->sql_fetchrow($result)) {
-			do {
-					$ban_end = $row['ban_end'];
-					$banstart = $row['ban_start'];
+			$ban_end = ($ban_end == 0 ? (string) $this->language->lang('PERMANENT') : $this->user->format_date($row['ban_end']));
 
-					/*! Ban end */
-					$ban_end = ($ban_end == 0 ? (string) $this->user->lang['PERM'] : $this->user-> format_date ($row['ban_end']));
-					
-					/*! Latest warning */
-					$last_warn = $row['user_last_warning'];
-					$last_warn = ($last_warn == 0 ? false : $this->user->format_date($row['user_last_warning']));
-					
-					/*! User Warns */
-					$warn = $row['user_warnings'];
-					$warn = ($warn == 0 ? (string) $this->user->lang['WARN_NO'] : $row['user_warnings']);
+			$last_warn = $row['user_last_warning'];
+			$last_warn = ($last_warn == 0 ? false : $this->user->format_date($row['user_last_warning']));
 
-					/*! Counter */
-					$row_number++;
+			$warn = $row['user_warnings'];
+			$warn = ($warn == 0 ? (string) $this->language->lang('WARN_NO') : $row['user_warnings']);
 
-					$this->template->assign_block_vars('banlist_row', array(
-						'ROW_NUMBER'			=> $row_number,
-						'BAN_START'				=> $this->user->format_date($row['ban_start']),
-						'BAN_END'				=> $ban_end,
-						'WARN'					=> $warn,
-						'LASTWARN'				=> $last_warn,
-						'BAN_REASON'			=> $row['ban_give_reason'],
-						'USERNAME_FULL'			=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
-					));
-				} while ($row = $this->db->sql_fetchrow($result));
+			$row_number++;
 
-			$this->db->sql_freeresult($result);
+			$this->template->assign_block_vars('banlist_row', [
+				'ROW_NUMBER'	=> $row_number,
+				'BAN_START'		=> $this->user->format_date($row['ban_start']),
+				'BAN_END'		=> $ban_end,
+				'WARN'			=> $warn,
+				'LAST_WARN'		=> $last_warn,
+				'BAN_REASON'	=> $row['ban_give_reason'],
+				'USERNAME_FULL'	=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
+			]);
+		}
+		$this->db->sql_freeresult($result);
+
+		$this->template->assign_vars([
+			//'U_SORT_USERNAME'	=> $sort_url . '?mode=&amp;sk=a&amp;sd=' . (($sort_key == 'a' && $sort_dir == 'a') ? 'd' : 'a'),
+			//'U_SORT_BAN_START'	=> $sort_url . '?mode=&amp;sk=b&amp;sd=' . (($sort_key == 'b' && $sort_dir == 'a') ? 'd' : 'a'),
+
+			'TOTAL_USERS'		=> $total_banned_users,
+
+			//'S_MODE_SELECT'		=> $s_sort_key,
+			//'S_ORDER_SELECT'	=> $s_sort_dir,
+		]);
+
+		$navlinks = [
+			[
+				'FORUM_NAME'	=> $this->language->lang('BANLIST'),
+				'U_VIEW_FORUM'	=> $this->helper->route('phpbbmodders_banlist_controller'),
+			],
+		];
+
+		foreach ($navlinks as $navlink)
+		{
+			$this->template->assign_block_vars('navlinks', [
+				'FORUM_NAME'	=> $navlink['FORUM_NAME'],
+				'U_VIEW_FORUM'	=> $navlink['U_VIEW_FORUM'],
+			]);
 		}
 
-		$this->template->assign_vars(array(
-			'PAGINATION'		=> $this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_banned_users, $per_page, $start),
-			'PAGE_NUMBER'		=> $this->pagination->on_page($total_banned_users, $per_page, $start),
-			'U_SORT_USERNAME'	=> $sort_url . '?mode=&amp;sk=a&amp;sd=' . (($sort_key == 'a' && $sort_dir == 'a') ? 'd' : 'a'),
-			'U_SORT_BAN_START'	=> $sort_url . '?mode=&amp;sk=b&amp;sd=' . (($sort_key == 'b' && $sort_dir == 'a') ? 'd' : 'a'),
-			'TOTAL_USERS'		=> $total_banned_users,
-			'S_MODE_SELECT'		=> $s_sort_key,
-			'S_ORDER_SELECT'	=> $s_sort_dir,
-			'S_MODE_ACTION'		=> $pagination_url
-		));
-
-		page_header($this->user->lang('BANU'));
-		
-		$this->template->set_filenames(array(
-			'body' => 'banlist_body.html'
-		));
-
-		page_footer();
-
-		return new Response(
-			$this->template->return_display('body'), 
-			200
-		);
+		return $this->helper->render('banlist_body.html');
 	}
 }

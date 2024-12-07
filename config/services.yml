@@ -1,30 +1,14 @@
 services:
-  phpbbmodders.banlist.controller.main:
-    class: phpbbmodders\banlist\controller\main_controller
-    arguments:
-      - "@request"
-      - "@config"
-      - "@pagination"
-      - "@dbal.conn"
-      - "@auth"
-      - "@template"
-      - "@user"
-      - "@controller.helper"
-      - "%core.root_path%"
-      - "%core.php_ext%"
-      - "%core.table_prefix%"
-  
-  phpbbmodders.banlist.main_listener:
-    class: phpbbmodders\banlist\event\main_listener
-    arguments:
-      - "@phpbbmodders.banlist.controller.main"
-      - "@config"
-      - "@request"
-      - "@dbal.conn"
-      - "@auth"
-      - "@template"
-      - "@user"
-      - "%core.root_path%"
-    tags:
-      - { name: event.listener }
+    _defaults:
+        autowire: true
+        bind:
+            $container: '@service_container'
+            $table_prefix: '%core.table_prefix%'
 
+    phpbbmodders.banlist.controller.main:
+        class: phpbbmodders\banlist\controller\main_controller
+
+    phpbbmodders.banlist.listener:
+        class: phpbbmodders\banlist\event\main_listener
+        tags:
+            - { name: event.listener }
