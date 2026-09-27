@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Ban List. An extension for the phpBB Forum Software package.
+ * Ban List extension for the phpBB Forum Software package
  *
  * @copyright (c) 2024, phpBB Modders, https://www.phpbbmodders.com/
  * @license GNU General Public License, version 2 (GPL-2.0)

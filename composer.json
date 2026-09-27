@@ -5,6 +5,13 @@
     "homepage": "https://www.phpbbmodders.com/",
     "version": "1.0.0-dev",
     "time": "2024-12-06",
+    "keywords": [
+        "phpbb",
+        "extension",
+        "ban",
+        "banlist",
+        "moderation"
+    ],
     "license": "GPL-2.0-only",
     "authors": [
         {
