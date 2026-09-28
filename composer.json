@@ -1,7 +1,7 @@
 {
     "name": "phpbbmodders/banlist",
     "type": "phpbb-extension",
-    "description": "Adds a list of banned users for others to view.",
+    "description": "Adds a page listing currently banned users.",
     "homepage": "https://www.phpbbmodders.com/",
     "version": "1.0.0-dev",
     "time": "2024-12-06",
