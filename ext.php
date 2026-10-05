@@ -19,16 +19,45 @@ namespace phpbbmodders\banlist;
 class ext extends \phpbb\extension\base
 {
 	/**
-	 * Check whether or not the extension can be enabled.
+	 * Check whether the extension can be enabled.
 	 * The current phpBB version should meet or exceed
 	 * the minimum version required by this extension.
 	 *
-	 * Requires phpBB 3.3.0 and PHP 8.0.0
+	 * @return bool|array
+	 * @access public
 	 */
 	public function is_enableable()
 	{
-		$config = $this->container->get('config');
+		$enableable = $this->check_phpbb_version() && $this->check_php_version();
 
-		return phpbb_version_compare($config['version'], '3.3.0', '>=') && version_compare(PHP_VERSION, '8.0.0', '>=');
+		if (!$enableable)
+		{
+			$language = $this->container->get('language');
+			$language->add_lang('install_banlist', 'phpbbmodders/banlist');
+
+			return $language->lang('BANLIST_NOT_ENABLEABLE');
+		}
+
+		return $enableable;
+	}
+
+	/**
+	 * Require phpBB 3.3.19
+	 *
+	 * @return bool
+	 */
+	public function check_phpbb_version()
+	{
+		return phpbb_version_compare(PHPBB_VERSION, '3.3.19', '>=');
+	}
+
+	/**
+	 * Require PHP 8.0
+	 *
+	 * @return bool
+	 */
+	public function check_php_version()
+	{
+		return PHP_VERSION_ID >= 80000;
 	}
 }

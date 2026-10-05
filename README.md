@@ -13,7 +13,7 @@ Adds a page listing currently banned users.
 
 ## Requirements
 
-- phpBB 3.3.0 or later
+- phpBB 3.3.19 or later
 - PHP 8.0 or later
 
 ## Installation
