@@ -1,5 +1,7 @@
 # TODO
 
+This extension has moved into [Ban Hammer](https://github.com/phpbbmodders/ban-hammer); the idea below is now planned in [Ban Hammer's TODO](https://github.com/phpbbmodders/ban-hammer/blob/master/docs/TODO.md).
+
 ## Export and import of bans
 
 Idea, not yet scoped. Requested on phpBB.com in [Export/Import banned email list](https://www.phpbb.com/community/viewtopic.php?t=2669812) (03/24/2026): someone who runs several boards wants ACP buttons to export banned emails from one board and import them on the others.
