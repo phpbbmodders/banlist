@@ -4,6 +4,8 @@
 
 Adds a page listing currently banned users.
 
+> **This extension has moved into [Ban Hammer](https://github.com/phpbbmodders/ban-hammer).** Ban Hammer now has the ban list as an ACP setting, working on phpBB 3.3 and 4.0. This repository is archived and no longer updated. If you used Ban List, disable and delete it, then install Ban Hammer, turn on **Show the ban list** in its ACP settings, and give groups the *Can view the ban list* permission (the standard and full user roles have it).
+
 ## Features
 
 - A **Ban list** link in the header navigation, for users with the *Can view ban list* permission.
