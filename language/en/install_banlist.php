@@ -38,5 +38,5 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, [
-	'BANLIST_NOT_ENABLEABLE'	=> 'Ban List could not be enabled. The minimum requirements of phpBB 3.3.19 and/or PHP 8.0.0 were not satisfied.',
+	'BANLIST_NOT_ENABLEABLE'	=> 'Ban List could not be enabled. The minimum requirements of phpBB 3.3.19 and/or PHP 8.3.36 were not satisfied.',
 ]);
